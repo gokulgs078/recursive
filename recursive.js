@@ -1,8 +1,10 @@
+
+
 const menuData = [
     {
         name: 'Home',
         link: '#home',
-        subMenu: [] 
+        subMenu: []
     },
     {
         name: 'About',
@@ -12,23 +14,11 @@ const menuData = [
                 name: 'Team',
                 link: '#team',
                 subMenu: [
-                    {
-                        name: 'Member 1',
-                        link: '#member1',
-                        subMenu: []
-                    },
-                    {
-                        name: 'Member 2',
-                        link: '#member2',
-                        subMenu: []
-                    }
+                    { name: 'Member 1', link: '#member1', subMenu: [] },
+                    { name: 'Member 2', link: '#member2', subMenu: [] }
                 ]
             },
-            {
-                name: 'Mission',
-                link: '#mission',
-                subMenu: []
-            }
+            { name: 'Mission', link: '#mission', subMenu: [] }
         ]
     },
     {
@@ -39,63 +29,48 @@ const menuData = [
                 name: 'Web Development',
                 link: '#web',
                 subMenu: [
-                    {
-                        name: 'Frontend',
-                        link: '#frontend',
-                        subMenu: []
-                    },
-                    {
-                        name: 'Backend',
-                        link: '#backend',
-                        subMenu: []
-                    }
+                    { name: 'Frontend', link: '#frontend', subMenu: [] },
+                    { name: 'Backend', link: '#backend', subMenu: [] }
                 ]
             },
             {
                 name: 'Mobile App',
                 link: '#mobile',
                 subMenu: [
-                    {
-                        name: 'Android',
-                        link: '#android',
-                        subMenu: []
-                    },
-                    {
-                        name: 'iOS',
-                        link: '#ios',
-                        subMenu: []
-                    }
+                    { name: 'Android', link: '#android', subMenu: [] },
+                    { name: 'iOS', link: '#ios', subMenu: [] }
                 ]
             }
         ]
     },
-    {
-        name: 'Contact',
-        link: '#contact',
-        subMenu: [] 
-    }
+    { name: 'Contact', link: '#contact', subMenu: [] }
 ];
-
 
 function generateMenu(menuItems) {
     const ul = document.createElement('ul');
-    
     menuItems.forEach(item => {
         const li = document.createElement('li');
         li.classList.add('menu-item');
-        
+
         const a = document.createElement('a');
         a.href = item.link;
         a.classList.add('menu-link');
         a.textContent = item.name;
-        
+
+        if (item.subMenu.length > 0) {
+            const arrow = document.createElement('span');
+            arrow.classList.add('arrow');
+            arrow.textContent = '▶'; 
+            a.appendChild(arrow);
+        }
+
         li.appendChild(a);
-        
-        
+
         if (item.subMenu.length > 0) {
             const submenuDiv = document.createElement('div');
             submenuDiv.classList.add('submenu');
-            submenuDiv.appendChild(generateMenu(item.subMenu)); 
+            submenuDiv.style.display = 'none'; 
+            submenuDiv.appendChild(generateMenu(item.subMenu));
             li.appendChild(submenuDiv);
         }
 
@@ -110,22 +85,25 @@ function setupMenuToggle() {
 
     menuLinks.forEach(link => {
         link.addEventListener('click', function(event) {
-            const clickedLink = event.target;
-            const submenu = clickedLink.nextElementSibling;
+            const clickedLink = event.target.closest('.menu-link');
+            const submenu = clickedLink.nextElementSibling; 
+            const arrow = clickedLink.querySelector('.arrow'); 
 
             if (submenu && submenu.classList.contains('submenu')) {
-                event.preventDefault();
+                event.preventDefault(); 
 
-                if (submenu.style.display === '' || submenu.style.display === 'none') {
-                    submenu.style.display = 'block'; 
-                } else {
-                    submenu.style.display = 'none'; 
+                const isExpanded = submenu.style.display === 'block';
+                submenu.style.display = isExpanded ? 'none' : 'block';
+
+                if (arrow) {
+                    arrow.textContent = isExpanded ? '▶' : '▼'; 
                 }
             }
         });
     });
 }
 
-document.getElementById('menu').appendChild(generateMenu(menuData));
+const menuElement = generateMenu(menuData);
+document.getElementById('menu').appendChild(menuElement);
 
 setupMenuToggle();
